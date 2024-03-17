@@ -1,6 +1,7 @@
 package main
 
 import (
+	"errors"
 	"fmt"
 	"reflect"
 	"strings"
@@ -10,7 +11,7 @@ import (
 	"github.com/traefik/yaegi/stdlib"
 )
 
-var i *interp.Interpreter
+// var i *interp.Interpreter
 var window js.Value
 var null = js.Null()
 var term js.Value
@@ -53,7 +54,7 @@ func main() {
 	stdout = writer{}
 	// stdin = reader{Mutex: &sync.RWMutex{}, Queue: make(chan byte)}
 
-	i = NewInterpreter()
+	// i = NewInterpreter()
 
 	window.Set("ExecPure", js.FuncOf(func(_ js.Value, args []js.Value) any {
 		if len(args) < 1 {
@@ -97,10 +98,24 @@ func NewInterpreter() *interp.Interpreter {
 	return i
 }
 
-func Exec(code string) (reflect.Value, error) {
-	return i.Eval(code)
-}
+// I plan to use this later (REPL mode)
+// func Exec(code string) (reflect.Value, error) {
+//  	return i.Eval(code)
+// }
 
-func ExecPure(code string) (reflect.Value, error) {
-	return NewInterpreter().Eval(code)
+func ExecPure(code string) (v reflect.Value, err error) {
+	defer func() {
+		if r := recover(); r != nil {
+			switch x := r.(type) {
+			case string:
+				err = errors.New(x)
+			case error:
+				err = x
+			default:
+				err = errors.New("unknown error (panic during code exection)")
+			}
+		}
+	}()
+	v, err = NewInterpreter().Eval(code)
+	return
 }
