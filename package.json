@@ -1,0 +1,13 @@
+{
+    "devDependencies": {
+      "tailwindcss": "^3.3.7"
+    },
+    "scripts": {
+      "dev": "npx tailwindcss -i ./assets/input.css -o ./assets/output.css --watch",
+      "build": "npx tailwindcss -i ./assets/input.css -o ./assets/output.css"
+    },
+    "dependencies": {
+      "monaco-editor": "0.47.0"
+    }
+  }
+  

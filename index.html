@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>GoFiddle</title>
+        <link rel="stylesheet" href="assets/output.css" />
+        <link rel="stylesheet" href="assets/xterm/xterm.css" />
+        <script src="assets/wasm_exec.js"></script>
+        <script>
+			const go = new Go()
+			WebAssembly.instantiateStreaming(fetch("main.wasm"), go.importObject).then(result => go.run(result.instance))
+		</script>
+        <script src="assets/xterm/xterm.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.35.0/min/vs/loader.min.js"></script>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.35.0/min/vs/editor/editor.main.min.css">
+        <script src="assets/main.js"></script>
+
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono&display=swap" rel="stylesheet">
+    </head>
+
+    <body class="h-svh bg-zinc-900 grid grid-rows-[4rem,1fr]">
+        <header class="flex gap-2 px-4 items-center">
+            <h1 class="text-sky-500 font-medium text-3xl">GoFiddle</h1>
+
+            <button style="background-color: white" onclick="exec()">run</button>
+        </header>
+        <div
+            id="appWrapper"
+            class="grid h-svh md:grid-cols-2 md:grid-rows-1 grid-cols-1 grid-rows-2"
+        >
+            <div id="editor-container"></div>
+            <div id="terminal" class="h-svh"></div>
+        </div>
+    </body>
+</html>
