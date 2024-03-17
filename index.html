@@ -12,7 +12,12 @@
             WebAssembly.instantiateStreaming(
                 fetch("main.wasm"),
                 go.importObject
-            ).then((result) => go.run(result.instance))
+            ).then((result) => {
+                go.run(result.instance)
+                runner.style = ""
+                runner.disabled = false
+                runner.title = ""
+            })
         </script>
         <script src="assets/xterm/xterm.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.35.0/min/vs/loader.min.js"></script>
@@ -56,7 +61,11 @@
                     </div>
                     <button
                         class="bg-[#fddd00] shadow hover:brightness-105 active:scale-[.975] py-2 px-6 rounded"
+                        style="opacity: 0.5; cursor: not-allowed"
+                        title="Loading interpretor..."
                         onclick="exec()"
+                        id="runner"
+                        disabled
                     >
                         Run
                     </button>

@@ -1,5 +1,4 @@
 window.executing = false
-
 function Defer(func) {
     if (document.readyState === "interactive") {
         func()
