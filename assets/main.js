@@ -71,6 +71,8 @@ Defer(() => {
 })
 
 function exec() {
+    if (window.executing) return
+    
     window.executing = true
 
     term.clear()
