@@ -22,7 +22,6 @@ type writer struct{}
 
 func (writer) Write(p []byte) (n int, err error) {
 	term.Call("write", strings.ReplaceAll(string(p), "\n", "\r\n"))
-	fmt.Println(p, len(p), string(p))
 	n = len(p)
 	return
 }
