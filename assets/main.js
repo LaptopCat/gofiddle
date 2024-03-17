@@ -1,3 +1,5 @@
+window.executing = false
+
 function Defer(func) {
     if (document.readyState === "interactive") {
         func()
@@ -69,6 +71,8 @@ Defer(() => {
 })
 
 function exec() {
+    window.executing = true
+
     term.clear()
     term.writeln("\x1b[1mExecuting...\x1b[0m\r\n")
 
@@ -92,4 +96,21 @@ function exec() {
     }
 
     term.writeln(`\x1b[36mTime taken: ${end - start}ms\x1b[0m`)
+
+    window.executing = false
 }
+
+// term.onKey(key => {
+//     if (!window.executing) return
+
+//     switch (key.key) {
+//         case "\n":
+//         case "\r":
+//             key.key = "\r\n"
+        
+//         default:
+//             term.write(key.key)
+//             InputKey(key.key)
+//             break
+//     }
+// })

@@ -27,58 +27,32 @@ func (writer) Write(p []byte) (n int, err error) {
 	return
 }
 
-// type queue struct {
-// 	Data []byte
-// }
-
-// func (q *queue) Read() (b byte) {
-// 	b = q.Data[0]
-// 	q.Data = q.Data[1:]
-// 	return
-// }
-
-// func (q *queue) Push(a []byte) {
-// 	q.Data = append(q.Data, a...)
-// }
-
+// broken dont uncomment yet
 // type reader struct {
-// 	Queue *queue
+// 	Queue chan byte
 // 	Mutex *sync.RWMutex
 // }
 
 // func (r reader) Read(p []byte) (n int, err error) {
-// 	r.Mutex.RLock()
-// 	defer r.Mutex.RUnlock()
-
-// 	fmt.Println("called new!", p, len(p), r.Queue, len(r.Queue.Data))
-
-// 	if len(r.Queue.Data) == 0 {
-// 		return 0, io.EOF
-// 	}
+// 	fmt.Println("called new!", p, len(p))
 
 // 	for i := 0; i < len(p); i++ {
-// 		p[i] = r.Queue.Read()
+// 		p[i] = <-r.Queue
 // 		n++
 // 	}
 
 // 	if n == 0 {
 // 		err = io.EOF
 // 	}
+
 // 	return
-// }
-
-// func (r *reader) Push(a []byte) {
-// 	r.Mutex.Lock()
-// 	defer r.Mutex.Unlock()
-
-// 	r.Queue.Push(a)
 // }
 
 func main() {
 	window = js.Global()
 	term = window.Get("term")
 	stdout = writer{}
-	//stdin = reader{Mutex: &sync.RWMutex{}, Queue: &queue{}}
+	// stdin = reader{Mutex: &sync.RWMutex{}, Queue: make(chan byte)}
 
 	i = NewInterpreter()
 
@@ -106,7 +80,10 @@ func main() {
 	// 		return null
 	// 	}
 
-	// 	stdin.Push([]byte(args[0].String()))
+	// 	data := []byte(args[0].String())
+	// 	for _, b := range data {
+	// 		stdin.Queue <- b
+	// 	}
 
 	// 	return true
 	// }))
