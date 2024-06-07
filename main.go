@@ -3,6 +3,7 @@ package main
 import (
 	"errors"
 	"fmt"
+	"go/format"
 	"reflect"
 	"strings"
 	"syscall/js"
@@ -75,6 +76,18 @@ func main() {
 		return []any{"result", fmt.Sprintf("%#+v", vl), fmt.Sprintf("%T", vl)}
 	}))
 
+	window.Set("FormatCode", js.FuncOf(func(_ js.Value, args []js.Value) any {
+		if len(args) < 1 {
+			return []any{null, null}
+		}
+
+		data, err := format.Source([]byte(args[0].String()))
+		if err != nil {
+			return []any{"error", fmt.Sprint(err)}
+		}
+
+		return []any{"result", string(data)}
+	}))
 	// window.Set("InputKey", js.FuncOf(func(_ js.Value, args []js.Value) any {
 	// 	if len(args) < 1 {
 	// 		return null

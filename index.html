@@ -1,86 +1,89 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="UTF-8" />
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-        <link
-            href="https://fonts.googleapis.com/css2?family=JetBrains+Mono&display=swap"
-            rel="stylesheet"
-        />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>GoFiddle</title>
-        <link rel="stylesheet" href="assets/output.css" />
-        <link rel="stylesheet" href="assets/xterm/xterm.css" />
-        <script src="assets/wasm_exec.js"></script>
-        <script>
-            const go = new Go()
-            WebAssembly.instantiateStreaming(
-                fetch("main.wasm"),
-                go.importObject
-            ).then((result) => {
-                go.run(result.instance)
-                runner.style = ""
-                runner.disabled = false
-                runner.title = ""
-            })
-        </script>
-        <script src="assets/xterm/xterm.js"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.35.0/min/vs/loader.min.js"></script>
-        <link
-            rel="stylesheet"
-            href="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.35.0/min/vs/editor/editor.main.min.css"
-        />
-        <script src="assets/main.js"></script>
 
-        <style>
-            .monaco-editor {
-                position: absolute !important;
-            }
-        </style>
-    </head>
+<head>
+    <meta charset="UTF-8" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono&display=swap" rel="stylesheet" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>GoFiddle</title>
+    <link rel="stylesheet" href="assets/output.css" />
+    <link rel="stylesheet" href="assets/xterm/xterm.css" />
+    <script src="assets/wasm_exec.js"></script>
+    <script>
+        const go = new Go()
+        WebAssembly.instantiateStreaming(
+            fetch("main.wasm"),
+            go.importObject
+        ).then((result) => {
+            go.run(result.instance)
 
-    <body class="h-svh bg-zinc-900 grid grid-rows-[4rem,1fr]">
-        <div
-            id="container"
-            class="grid w-svw overflow-hidden grid-cols-1 grid-rows-2 h-svh md:grid-cols-[1fr_1rem_1fr] md:grid-rows-1"
-        >
-            <div id="outer-editor" class="grid grid-rows-[4rem,1fr]">
-                <header
-                    class="flex items-center bg-[#1B323B] justify-between gap-2 py-1 px-4"
-                >
-                    <div class="flex items-center gap-4 -ml-8">
-                        <img
-                            src="assets/images/gopher.png"
-                            alt="the go mascot, a blue gopher"
-                            class="rotate-90 size-14 drop-shadow"
-                        />
-                        <h1 class="text-3xl font-medium text-white">
-                            GoFiddle
-                        </h1>
-                    </div>
-                    <button
-                        class="bg-[#fddd00] shadow hover:brightness-105 active:scale-[.975] py-2 px-6 rounded"
-                        style="opacity: 0.5; cursor: not-allowed"
-                        title="Loading interpretor..."
-                        onclick="exec()"
-                        id="runner"
-                        disabled
-                    >
+            runner.style = ""
+            runner.disabled = false
+            runner.title = ""
+
+            formatter.style = ""
+            formatter.disabled = false
+            formatter.title = ""
+
+            term.clear()
+            term.writeln("\x1b[36mWelcome to GoFiddle!\x1b[0m")
+            term.writeln("Start writing code in the editor on the left side of the screen")
+            term.writeln(`You can press the "Format" button to automatically format your code`)
+            term.writeln(`When you are done writing the code, press the "Run" button to try it out!`)
+        })
+    </script>
+    <script src="assets/xterm/xterm.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.35.0/min/vs/loader.min.js"></script>
+    <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.35.0/min/vs/editor/editor.main.min.css" />
+    <script src="assets/main.js"></script>
+
+    <style>
+        .monaco-editor {
+            position: absolute !important;
+        }
+    </style>
+</head>
+
+<body class="h-svh bg-zinc-900 grid grid-rows-[4rem,1fr]">
+    <div id="container"
+        class="grid w-svw overflow-hidden grid-cols-1 grid-rows-2 h-svh md:grid-cols-[1fr_1rem_1fr] md:grid-rows-1">
+        <div id="outer-editor" class="grid grid-rows-[4rem,1fr]">
+            <header class="flex items-center bg-[#1B323B] justify-between gap-2 py-1 px-4">
+                <div class="flex items-center gap-4 -ml-8">
+                    <img src="assets/images/gopher.png" alt="the go mascot, a blue gopher"
+                        class="rotate-90 size-14 drop-shadow" />
+                    <h1 class="text-3xl font-medium text-white">
+                        GoFiddle
+                    </h1>
+                </div>
+
+                <div style="display: flex; gap: .5rem">
+                    <button class="bg-[#fddd00] shadow hover:brightness-105 active:scale-[.975] py-2 px-6 rounded"
+                        style="opacity: 0.5; cursor: not-allowed" title="Loading interpretor..." onclick="fmt()"
+                        id="formatter" disabled>
+                        Format
+                    </button>
+
+                    <button class="bg-[#fddd00] shadow hover:brightness-105 active:scale-[.975] py-2 px-6 rounded"
+                        style="opacity: 0.5; cursor: not-allowed" title="Loading interpretor..." onclick="exec()"
+                        id="runner" disabled>
                         Run
                     </button>
-                </header>
-                <div id="editor"></div>
-            </div>
-            <div
-                id="handle"
-                style="left: 50%"
-                class="z-20 hidden w-4 h-full bg-zinc-900 dark:border-white/10 cursor-ew-resize place-items-center after:block after:h-12 after:w-1 after:rounded-full after:bg-zinc-600 md:grid"
-            ></div>
-            <div id="outer-terminal" class="p-4 h-svh bg-[#282a36]">
-                <div id="terminal" class="md:w-[calc(100svw/2)] h-svh"></div>
-            </div>
+                </div>
+            </header>
+            <div id="editor"></div>
         </div>
-        <script src="assets/window-resizing.js"></script>
-    </body>
+        <div id="handle" style="left: 50%"
+            class="z-20 hidden w-4 h-full bg-zinc-900 dark:border-white/10 cursor-ew-resize place-items-center after:block after:h-12 after:w-1 after:rounded-full after:bg-zinc-600 md:grid">
+        </div>
+        <div id="outer-terminal" class="p-4 h-svh bg-[#282a36]">
+            <div id="terminal" class="md:w-[calc(100svw/2)] h-svh"></div>
+        </div>
+    </div>
+    <script src="assets/window-resizing.js"></script>
+</body>
+
 </html>

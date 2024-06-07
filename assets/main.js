@@ -67,6 +67,8 @@ Defer(() => {
     term.loadAddon(fitAddon)
 
     fitAddon.fit()
+
+    term.writeln("\x1b[1mLoading interpretor...\x1b[0m\r\n")
 })
 
 function exec() {
@@ -99,6 +101,26 @@ function exec() {
     term.writeln(`\x1b[36mTime taken: ${end - start}ms\x1b[0m`)
 
     window.executing = false
+}
+
+function fmt() {
+    term.clear()
+
+    start = performance.now()
+    res = FormatCode(editor.getValue())
+    end = performance.now()
+    switch (res[0]) {
+        case "error":
+            term.writeln("\x1b[1mAn error occured during formatting!")
+            term.writeln("\x1b[31;1m" + res[1] + "\x1b[0m")
+            break
+        case "result":
+            term.writeln("\x1b[1mFormatting done!")
+            editor.setValue(res[1])
+            break
+    }
+
+    term.writeln(`\x1b[36mTime taken: ${end - start}ms\x1b[0m`)
 }
 
 // term.onKey(key => {
