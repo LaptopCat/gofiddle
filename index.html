@@ -19,7 +19,6 @@
             go.importObject
         ).then((result) => {
             go.run(result.instance)
-            loaded.wasm = true
 
             runner.style = ""
             runner.disabled = false
@@ -35,6 +34,7 @@
             term.writeln(`You can press the "Format" button to automatically format your code`)
             term.writeln(`When you are done writing the code, press the "Run" button to try it out!`)
 
+            loaded.wasm = true
             monacoAndWasmLoaded()
         })
     </script>

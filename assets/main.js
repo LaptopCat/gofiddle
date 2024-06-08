@@ -32,7 +32,7 @@ require(["vs/editor/editor.main"], () => {
 })
 
 function monacoAndWasmLoaded() {
-    if (!loaded.monaco && !loaded.wasm) {
+    if (!loaded.monaco || !loaded.wasm) {
         return
     }
 
