@@ -26,14 +26,6 @@ require(["vs/editor/editor.main"], () => {
             enabled: false,
         },
     })
-
-    editor.setValue(`package main
-    
-import "fmt"
-    
-func main() {
-    fmt.Println("Hello, GoFiddle!")
-}`)
 })
 
 window.term = new Terminal({
@@ -121,6 +113,45 @@ function fmt() {
     }
 
     term.writeln(`\x1b[36mTime taken: ${end - start}ms\x1b[0m`)
+}
+
+function padBase64(input) {
+    let diff = input.length % 4
+    if (!diff) {
+        return input
+    }
+
+    let padLength = 4 - diff
+
+    while (padLength--) {
+        input += "="
+    }
+    return input
+}
+
+function share() {
+    term.clear()
+
+    term.writeln("\x1b[1mTrying to compress...\x1b[0m")
+    let content = editor.getValue().trim()
+    let enc = new TextEncoder().encode(content)
+    
+    let compLen = Compress(enc)
+    let encoded
+    if (compLen >= content.length) {
+        term.writeln("\x1b[1mCompression ineffective! Falling back to raw content...\x1b[0m")
+        encoded = btoa(content)
+    } else {
+        term.writeln(`\x1b[1mContent succesfully compressed!\x1b[0m`)
+        encoded = bytesToBase64(enc.slice(0, compLen))
+    }
+
+    let url = new URL(location.href)
+    url.hash = encoded.replaceAll("=", "")
+
+    navigator.clipboard.writeText(url.href)
+    term.writeln("Copied link to clipboard!")
+    term.writeln(url.href)
 }
 
 // term.onKey(key => {

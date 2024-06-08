@@ -32,6 +32,24 @@
             term.writeln("Start writing code in the editor on the left side of the screen")
             term.writeln(`You can press the "Format" button to automatically format your code`)
             term.writeln(`When you are done writing the code, press the "Run" button to try it out!`)
+
+            if (location.hash != "") {
+                let comp = base64ToBytes(padBase64(location.hash.slice(1)))
+                let result = Decompress(comp)
+                if (result[0] === "error") {
+                    editor.setValue(new TextDecoder().decode(comp))
+                } else {
+                    editor.setValue(result[1])
+                }
+            } else {
+                editor.setValue(`package main
+    
+import "fmt"
+    
+func main() {
+    fmt.Println("Hello, GoFiddle!")
+}`)
+            }
         })
     </script>
     <script src="assets/xterm/xterm.js"></script>
@@ -39,6 +57,7 @@
     <link rel="stylesheet"
         href="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.35.0/min/vs/editor/editor.main.min.css" />
     <script src="assets/main.js"></script>
+    <script async src="assets/b64.js"></script>
 
     <style>
         .monaco-editor {
@@ -61,6 +80,11 @@
                 </div>
 
                 <div style="display: flex; gap: .5rem">
+                    <button class="bg-[#fddd00] shadow hover:brightness-105 active:scale-[.975] py-2 px-6 rounded"
+                        onclick="share()">
+                        Share
+                    </button>
+
                     <button class="bg-[#fddd00] shadow hover:brightness-105 active:scale-[.975] py-2 px-6 rounded"
                         style="opacity: 0.5; cursor: not-allowed" title="Loading interpretor..." onclick="fmt()"
                         id="formatter" disabled>

@@ -9,6 +9,7 @@ import (
 	"strings"
 	"syscall/js"
 
+	"github.com/klauspost/compress/zstd"
 	"github.com/traefik/yaegi/interp"
 	"github.com/traefik/yaegi/stdlib"
 )
@@ -18,6 +19,8 @@ var window js.Value
 var null = js.Null()
 var term js.Value
 var stdout writer
+var encoder, _ = zstd.NewWriter(nil)
+var decoder, _ = zstd.NewReader(nil)
 
 // var stdin reader
 
@@ -49,6 +52,12 @@ func (writer) Write(p []byte) (n int, err error) {
 
 // 	return
 // }
+
+func CopyBytesToGo(val js.Value) ([]byte, int) {
+	dst := make([]byte, val.Length())
+	ln := js.CopyBytesToGo(dst, val)
+	return dst, ln
+}
 
 func main() {
 	window = js.Global()
@@ -92,6 +101,26 @@ func main() {
 
 	window.Set("GetVersion", js.FuncOf(func(_ js.Value, _ []js.Value) any {
 		return runtime.Version()
+	}))
+
+	window.Set("Compress", js.FuncOf(func(_ js.Value, args []js.Value) any {
+		data, ln := CopyBytesToGo(args[0])
+		return js.CopyBytesToJS(args[0], encoder.EncodeAll(data, make([]byte, 0, ln)))
+	}))
+
+	// window.Set("Compress2", js.FuncOf(func(_ js.Value, args []js.Value) any {
+	// 	data, ln := CopyBytesToGo(args[0])
+	// 	return js.CopyBytesToJS(args[1], encoder.EncodeAll(data, make([]byte, 0, ln)))
+	// }))
+
+	window.Set("Decompress", js.FuncOf(func(_ js.Value, args []js.Value) any {
+		ar, ln := CopyBytesToGo(args[0])
+		data, err := decoder.DecodeAll(ar, make([]byte, 0, ln))
+		if err != nil {
+			return []any{"error", fmt.Sprint(err)}
+		}
+
+		return []any{"result", string(data)}
 	}))
 
 	// window.Set("InputKey", js.FuncOf(func(_ js.Value, args []js.Value) any {
