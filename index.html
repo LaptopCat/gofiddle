@@ -18,6 +18,7 @@
             go.importObject
         ).then((result) => {
             go.run(result.instance)
+            loaded.wasm = true
 
             runner.style = ""
             runner.disabled = false
@@ -33,23 +34,7 @@
             term.writeln(`You can press the "Format" button to automatically format your code`)
             term.writeln(`When you are done writing the code, press the "Run" button to try it out!`)
 
-            if (location.hash != "") {
-                let comp = base64ToBytes(padBase64(location.hash.slice(1)))
-                let result = Decompress(comp)
-                if (result[0] === "error") {
-                    editor.setValue(new TextDecoder().decode(comp))
-                } else {
-                    editor.setValue(result[1])
-                }
-            } else {
-                editor.setValue(`package main
-    
-import "fmt"
-    
-func main() {
-    fmt.Println("Hello, GoFiddle!")
-}`)
-            }
+            monacoAndWasmLoaded()
         })
     </script>
     <script src="assets/xterm/xterm.js"></script>

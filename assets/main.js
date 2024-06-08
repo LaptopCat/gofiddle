@@ -26,7 +26,36 @@ require(["vs/editor/editor.main"], () => {
             enabled: false,
         },
     })
+
+    loaded.monaco = true
+    monacoAndWasmLoaded()
 })
+
+const loaded = {monaco: false, wasm: false}
+function monacoAndWasmLoaded() {
+    if (!loaded.monaco && !loaded.wasm) {
+        return
+    }
+
+    if (location.hash != "") {
+        let comp = base64ToBytes(padBase64(location.hash.slice(1)))
+        let result = Decompress(comp)
+        if (result[0] === "error") {
+            editor.setValue(new TextDecoder().decode(comp))
+        } else {
+            editor.setValue(result[1])
+        }
+    } else {
+        editor.setValue(`package main
+
+import "fmt"
+
+func main() {
+    fmt.Println("Hello, GoFiddle!")
+}`)
+    }
+}
+
 
 window.term = new Terminal({
     theme: {
