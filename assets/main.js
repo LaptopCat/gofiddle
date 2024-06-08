@@ -1,5 +1,4 @@
 window.executing = false
-const loaded = {monaco: false, wasm: false}
 function Defer(func) {
     if (document.readyState === "interactive") {
         func()

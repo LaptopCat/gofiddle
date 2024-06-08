@@ -12,6 +12,7 @@
     <link rel="stylesheet" href="assets/xterm/xterm.css" />
     <script src="assets/wasm_exec.js"></script>
     <script>
+        const loaded = {monaco: false, wasm: false}
         const go = new Go()
         WebAssembly.instantiateStreaming(
             fetch("main.wasm"),
