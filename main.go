@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"go/format"
 	"reflect"
+	"runtime"
 	"strings"
 	"syscall/js"
 
@@ -88,6 +89,11 @@ func main() {
 
 		return []any{"result", string(data)}
 	}))
+
+	window.Set("GetVersion", js.FuncOf(func(_ js.Value, _ []js.Value) any {
+		return runtime.Version()
+	}))
+
 	// window.Set("InputKey", js.FuncOf(func(_ js.Value, args []js.Value) any {
 	// 	if len(args) < 1 {
 	// 		return null
