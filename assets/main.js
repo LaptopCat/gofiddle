@@ -1,4 +1,5 @@
 window.executing = false
+const loaded = {monaco: false, wasm: false}
 function Defer(func) {
     if (document.readyState === "interactive") {
         func()
@@ -31,7 +32,6 @@ require(["vs/editor/editor.main"], () => {
     monacoAndWasmLoaded()
 })
 
-const loaded = {monaco: false, wasm: false}
 function monacoAndWasmLoaded() {
     if (!loaded.monaco && !loaded.wasm) {
         return
