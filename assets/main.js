@@ -29,6 +29,8 @@ require(["vs/editor/editor.main"], () => {
 
     document.fonts.load('13px "JetBrains Mono"').then(() => monaco.editor.remeasureFonts())
 
+    startLanguageServer(editor)
+
     loaded.monaco = true
     monacoAndWasmLoaded()
 })

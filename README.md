@@ -14,3 +14,4 @@ Run [Go](https://go.dev) code directly in your browser, using the power of WebAs
 - Fully local
 - Open-source
 - Has a pleasant UI
+- built-in Go language server
