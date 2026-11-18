@@ -27,6 +27,8 @@ require(["vs/editor/editor.main"], () => {
         },
     })
 
+    document.fonts.load('13px "JetBrains Mono"').then(() => monaco.editor.remeasureFonts())
+
     loaded.monaco = true
     monacoAndWasmLoaded()
 })
@@ -80,15 +82,16 @@ window.term = new Terminal({
     },
     fontFamily: "JetBrains Mono",
 })
+term.writeln("\x1b[1mLoading interpretor...\x1b[0m\r\n")
 Defer(() => {
-    term.open(document.getElementById("terminal"))
+    document.fonts.load(`${term.options.fontSize}px "JetBrains Mono"`).finally(() => {
+        term.open(document.getElementById("terminal"))
 
-    const fitAddon = new FitAddon.FitAddon()
-    term.loadAddon(fitAddon)
+        const fitAddon = new FitAddon.FitAddon()
+        term.loadAddon(fitAddon)
 
-    fitAddon.fit()
-
-    term.writeln("\x1b[1mLoading interpretor...\x1b[0m\r\n")
+        fitAddon.fit()
+    })
 })
 
 function exec() {
